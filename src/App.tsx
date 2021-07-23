@@ -7,9 +7,9 @@ import Lifecycle from "./components/Lifecycle";
 import "./App.css";
 
 export class App extends React.Component<{}, {}> {
-	constructor(props: any) {
-		super(props);
-	}
+	// constructor(props: any) {
+	// 	super(props);
+	// }
 
 	render() {
 		return (
