@@ -6,10 +6,26 @@ import Assets from "./components/Assets";
 import Lifecycle from "./components/Lifecycle";
 import "./App.css";
 
-export class App extends React.Component<{}, {}> {
-	// constructor(props: any) {
-	// 	super(props);
-	// }
+export interface Session {
+	token: string;
+}
+export class App extends React.Component<{}, Session> {
+	constructor(props: any) {
+		super(props);
+		this.state = {
+			token: "",
+		};
+	}
+
+	setSession = (session: Session) => {
+		localStorage.setItem("session", JSON.stringify(session));
+		this.setState(session);
+	};
+
+	clearSession = () => {
+		localStorage.clear();
+		this.setState({ token: "" });
+	};
 
 	render() {
 		return (
@@ -35,7 +51,7 @@ export class App extends React.Component<{}, {}> {
 
 				<Switch>
 					<Route path='/login'>
-						<Login />
+						<Login setSession={this.setSession} />
 					</Route>
 					<Route path='/register'>
 						<Register />

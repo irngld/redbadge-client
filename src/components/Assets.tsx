@@ -52,7 +52,8 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			method: "GET",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization: "",
+				Authorization:
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MjU4NDY1LCJleHAiOjE2MjczNDQ4NjV9.xcUmG0dox-j2kNDLhWqvoxMd83z6VzOkcf4njw3Jyqk",
 			}),
 		})
 			.then((res) => res.json())
@@ -71,21 +72,36 @@ class Assets extends React.Component<InitialProps, InitialState> {
 
 	createAsset(form: Omit<Asset, "id" | "createdAt" | "updatedAt">) {
 		const APIURL = process.env.REACT_APP_API_URL;
-		const endPoint = "/assets/";
+		const endPoint = "/asset/";
 		fetch(`${APIURL}${endPoint}`, {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
 				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI2OTc2OTgwLCJleHAiOjE2MjcwNjMzODB9.5Sohe7-JIZJZgFJZ2nyBgJkLDUDQ_v2lKdLj22H5dfA",
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MjU5NTcxLCJleHAiOjE2MjczNDU5NzF9.SuGp2LrbK4FMN-9c3ZVyuZNBqIHikb5e4AFTyg5gdqg",
 			}),
-			body: JSON.stringify({}), //JSON.stringify(),
+			body: JSON.stringify({
+				serial_number: form.serial_number,
+				make: form.make,
+				series: form.series,
+				model: form.model,
+				dev_type: form.dev_type,
+				form_factor: form.form_factor,
+			}), //JSON.stringify(),
 		})
 			.then((res) => res.json())
 			.catch((err) => {
 				console.log(err);
 			})
 			.finally();
+	}
+
+	onUpdate(asset: Asset) {
+		console.log("clicked: update", asset.id);
+	}
+
+	onDelete(asset: Asset) {
+		console.log("clicked: update", asset.id);
 	}
 
 	onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -164,15 +180,21 @@ class Assets extends React.Component<InitialProps, InitialState> {
 						</tr>
 					</thead>
 					<tbody>
-						{this.state.assets.map((row, i) => {
+						{this.state.assets.map((asset, i) => {
 							return (
 								<tr>
-									<td>{row.asset_tag}</td>
-									<td>{row.model}</td>
-									<td>{row.make}</td>
-									<td>{row.series}</td>
-									<td>{row.dev_type}</td>
-									<td>{row.serial_number}</td>
+									<td>{asset.asset_tag}</td>
+									<td>{asset.model}</td>
+									<td>{asset.make}</td>
+									<td>{asset.series}</td>
+									<td>{asset.dev_type}</td>
+									<td>{asset.serial_number}</td>
+									<td>
+										<button onClick={() => this.onUpdate(asset)}>Update</button>
+									</td>
+									<td>
+										<button onClick={() => this.onDelete(asset)}>Delete</button>
+									</td>
 								</tr>
 							);
 						})}
