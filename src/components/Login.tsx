@@ -8,7 +8,7 @@ interface InitialState {
 }
 
 interface initialProps extends RouteComponentProps {
-	setSession(session: Session): any; //void, not returning anythign back
+	setSession(session: Session): any; //void, not returning anything back
 }
 class Login extends React.Component<initialProps, InitialState> {
 	constructor(props: initialProps) {
@@ -32,7 +32,7 @@ class Login extends React.Component<initialProps, InitialState> {
 			body: JSON.stringify({
 				email: this.state.email,
 				password: this.state.password,
-			}), //JSON.stringify(),
+			}), // body: JSON.stringify(),
 		})
 			.then((res) => res.json())
 			.then((data) => {

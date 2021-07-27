@@ -54,7 +54,7 @@ export class App extends React.Component<{}, Session> {
 						<Login setSession={this.setSession} />
 					</Route>
 					<Route path='/register'>
-						<Register />
+						<Register setSession={this.setSession} />
 					</Route>
 					<Route path='/assets/:id/lifecycle'>
 						<Lifecycle />

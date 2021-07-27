@@ -1,4 +1,5 @@
 import React from "react";
+// import { Session } from "../App"; // added 7/26, testing
 
 export interface Asset {
 	asset_tag: string;
@@ -13,7 +14,9 @@ export interface Asset {
 	updatedAt: string;
 }
 
-interface InitialProps {}
+interface InitialProps {
+	// session: Session;  // added 7/26, testing
+}
 
 interface InitialState {
 	loading: boolean;
@@ -73,12 +76,13 @@ class Assets extends React.Component<InitialProps, InitialState> {
 	createAsset(form: Omit<Asset, "id" | "createdAt" | "updatedAt">) {
 		const APIURL = process.env.REACT_APP_API_URL;
 		const endPoint = "/asset/";
+
 		fetch(`${APIURL}${endPoint}`, {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
 				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MjU5NTcxLCJleHAiOjE2MjczNDU5NzF9.SuGp2LrbK4FMN-9c3ZVyuZNBqIHikb5e4AFTyg5gdqg",
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MzUwNjc4LCJleHAiOjE2Mjc0MzcwNzh9.Ed-iLAfKGhsbbrDuKsoEUchitpu0XyuVmIq4duiD27E",
 			}),
 			body: JSON.stringify({
 				serial_number: form.serial_number,
@@ -98,6 +102,31 @@ class Assets extends React.Component<InitialProps, InitialState> {
 
 	onUpdate(asset: Asset) {
 		console.log("clicked: update", asset.id);
+		const APIURL = process.env.REACT_APP_API_URL;
+		const endPoint = `/asset/${asset.id}`;
+
+		fetch(`${APIURL}${endPoint}`, {
+			method: "PUT",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization:
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MzUwNjc4LCJleHAiOjE2Mjc0MzcwNzh9.Ed-iLAfKGhsbbrDuKsoEUchitpu0XyuVmIq4duiD27E",
+			}), // NEED TO RETRIEVE TOKEN
+			body: JSON.stringify({
+				// WHERE AM I CAPTURING DATA FROM? AM I ADDING A NEW FORM?
+				// serial_number: form.serial_number,
+				// make: form.make,
+				// series: form.series,
+				// model: form.model,
+				// dev_type: form.dev_type,
+				// form_factor: form.form_factor,
+			}), //JSON.stringify(),
+		})
+			.then((res) => res.json())
+			.catch((err) => {
+				console.log(err);
+			})
+			.finally();
 	}
 
 	onDelete(asset: Asset) {
@@ -182,7 +211,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 					<tbody>
 						{this.state.assets.map((asset, i) => {
 							return (
-								<tr>
+								<tr className={asset.id.toString()}>
 									<td>{asset.asset_tag}</td>
 									<td>{asset.model}</td>
 									<td>{asset.make}</td>
