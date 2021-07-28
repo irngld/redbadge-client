@@ -14,15 +14,15 @@ export interface Asset {
 	updatedAt: string;
 }
 
-interface InitialProps {
-	// session: Session;  // added 7/26, testing
-}
+interface InitialProps {}
 
+type Form = Omit<Asset, "createdAt" | "updatedAt">;
 interface InitialState {
 	loading: boolean;
 	error: string;
 	assets: Asset[];
-	form: Omit<Asset, "id" | "createdAt" | "updatedAt">;
+	form: Form;
+	action: "Create" | "Update";
 }
 
 class Assets extends React.Component<InitialProps, InitialState> {
@@ -33,6 +33,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			error: "",
 			assets: [],
 			form: {
+				id: 0,
 				asset_tag: "",
 				dev_type: "",
 				form_factor: "",
@@ -41,6 +42,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 				serial_number: "",
 				series: "",
 			},
+			action: "Create",
 		};
 		this.onSubmit = this.onSubmit.bind(this);
 	}
@@ -100,43 +102,69 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			.finally();
 	}
 
-	onUpdate(asset: Asset) {
-		console.log("clicked: update", asset.id);
+	onUpdateLocal(asset: Asset) {
+		this.setState((currentState) => {
+			return { ...currentState, form: asset, action: "Update" };
+		});
+	}
+
+	updateAsset(form: Form) {
+		console.log("clicked: update", form.id);
 		const APIURL = process.env.REACT_APP_API_URL;
-		const endPoint = `/asset/${asset.id}`;
+		const endPoint = `/asset/${form.id}`;
 
 		fetch(`${APIURL}${endPoint}`, {
 			method: "PUT",
 			headers: new Headers({
 				"Content-Type": "application/json",
 				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MzUwNjc4LCJleHAiOjE2Mjc0MzcwNzh9.Ed-iLAfKGhsbbrDuKsoEUchitpu0XyuVmIq4duiD27E",
-			}), // NEED TO RETRIEVE TOKEN
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3NDMwMzE2LCJleHAiOjE2Mjc1MTY3MTZ9.iXhVLfxworUDxNagYYwtu_pO608yLMAji46cIylY_q4",
+			}),
 			body: JSON.stringify({
-				// WHERE AM I CAPTURING DATA FROM? AM I ADDING A NEW FORM?
-				// serial_number: form.serial_number,
-				// make: form.make,
-				// series: form.series,
-				// model: form.model,
-				// dev_type: form.dev_type,
-				// form_factor: form.form_factor,
-			}), //JSON.stringify(),
+				serial_number: form.serial_number,
+				make: form.make,
+				series: form.series,
+				model: form.model,
+				dev_type: form.dev_type,
+				form_factor: form.form_factor,
+			}),
 		})
 			.then((res) => res.json())
+			.then((asset) => console.log(asset))
 			.catch((err) => {
 				console.log(err);
 			})
 			.finally();
 	}
 
-	onDelete(asset: Asset) {
-		console.log("clicked: update", asset.id);
+	onDelete(form: Form) {
+		if (window.confirm("Are you sure you want to delete?")) {
+			console.log("clicked: update", form.id);
+			const APIURL = process.env.REACT_APP_API_URL;
+			const endPoint = `/asset/${form.id}`;
+
+			fetch(`${APIURL}${endPoint}`, {
+				method: "DELETE",
+				headers: new Headers({
+					"Content-Type": "application/json",
+					Authorization:
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3NDMwMzE2LCJleHAiOjE2Mjc1MTY3MTZ9.iXhVLfxworUDxNagYYwtu_pO608yLMAji46cIylY_q4",
+				}),
+			})
+				.then((res) => res.json())
+				.then((asset) => console.log(asset))
+				.catch((err) => {
+					console.log(err);
+				})
+				.finally();
+		} else {
+		}
 	}
 
 	onSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		console.log(this.state.form);
-		this.createAsset(this.state.form);
+		if (this.state.action === "Create") this.createAsset(this.state.form);
+		if (this.state.action === "Update") this.updateAsset(this.state.form);
 	}
 
 	onChange(name: string) {
@@ -195,7 +223,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 					<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} />
 					<br />
 					<br />
-					<input type='submit' value='Submit' />
+					<input type='submit' value={this.state.action} />
 				</form>
 				<table>
 					<thead>
@@ -211,7 +239,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 					<tbody>
 						{this.state.assets.map((asset, i) => {
 							return (
-								<tr className={asset.id.toString()}>
+								<tr key={asset.id}>
 									<td>{asset.asset_tag}</td>
 									<td>{asset.model}</td>
 									<td>{asset.make}</td>
@@ -219,7 +247,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 									<td>{asset.dev_type}</td>
 									<td>{asset.serial_number}</td>
 									<td>
-										<button onClick={() => this.onUpdate(asset)}>Update</button>
+										<button onClick={() => this.onUpdateLocal(asset)}>Update</button>
 									</td>
 									<td>
 										<button onClick={() => this.onDelete(asset)}>Delete</button>

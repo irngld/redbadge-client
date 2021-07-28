@@ -1,6 +1,7 @@
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Session } from "../App";
+import { Session } from "../utilities/Authorization";
+// import { Session } from "../App";
 
 interface InitialState {
 	email: string;
@@ -8,7 +9,7 @@ interface InitialState {
 }
 
 interface initialProps extends RouteComponentProps {
-	setSession(session: Session): any; //void, not returning anything back
+	setSession(session: Session): any; // void, not returning anything back
 }
 class Login extends React.Component<initialProps, InitialState> {
 	constructor(props: initialProps) {

@@ -1,6 +1,7 @@
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Session } from "../App";
+// import { Session } from "../App";
+import { Session } from "../utilities/Authorization";
 
 interface InitialState {
 	email: string;
@@ -136,6 +137,16 @@ class Register extends React.Component<initialProps, InitialState> {
 						placeholder='Enter Suffix'
 						value={this.state.suffix}
 						onChange={(e) => this.setState({ suffix: e.target.value })}
+					/>
+				</div>
+				<div className='form-group'>
+					<label>Department</label>
+					<input
+						type='text'
+						className='form-control'
+						placeholder='Enter Department'
+						value={this.state.dept}
+						onChange={(e) => this.setState({ dept: e.target.value })}
 					/>
 				</div>
 				{/* roleId must be automatically assigned as user level */}

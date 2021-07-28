@@ -1,13 +1,20 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Session } from "./utilities/Authorization";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Assets from "./components/Assets";
 import Lifecycle from "./components/Lifecycle";
 import "./App.css";
 
-export interface Session {
-	token: string;
+// export interface Session {
+// 	token: string;
+// }
+
+interface InitialState {
+	loading: boolean;
+	error: string;
+	token: Session;
 }
 export class App extends React.Component<{}, Session> {
 	constructor(props: any) {
