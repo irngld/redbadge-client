@@ -39,11 +39,15 @@
 
 .centerDiv {
 	background-color: white;
-	opacity: 87%;
+	opacity: 93%;
 }
 
-.btn-asset {
+.btn-asset-edit {
 	background-color: darkcyan;
-	opacity: 100%;
-	color: white;
+	/* opacity: 100%;
+	color: white; */
+}
+
+.btn-asset-del {
+	background-color: darkred;
 }

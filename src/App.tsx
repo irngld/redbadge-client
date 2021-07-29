@@ -9,7 +9,7 @@ import Lifecycle from "./components/Lifecycle";
 
 import Menu from "./components/Menu";
 export interface Session {
-	token: string | null;
+	token: string;
 	isUserAdmin: boolean;
 }
 
@@ -17,7 +17,7 @@ class App extends React.Component<{}, Session> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			token: localStorage.getItem("sessionToken"),
+			token: localStorage.getItem("sessionToken") ?? "",
 			isUserAdmin: false,
 		};
 		// this.authenticateUser = this.authenticateUser.bind(this);
@@ -35,7 +35,7 @@ class App extends React.Component<{}, Session> {
 	handleLogout(): void {
 		localStorage.removeItem("sessionToken");
 		this.setState({
-			token: null,
+			token: "",
 		});
 	}
 

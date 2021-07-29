@@ -1,5 +1,9 @@
 import React from "react";
-import { Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@material-ui/core";
+import { Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from "@material-ui/core";
+import { createTheme } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ComputerIcon from "@material-ui/icons/Computer";
 // import { Session } from "../App"; // added 7/26, testing
 
 export interface Asset {
@@ -16,7 +20,7 @@ export interface Asset {
 }
 
 interface InitialProps {
-	token: string | null;
+	token: string;
 }
 
 type Form = Omit<Asset, "createdAt" | "updatedAt">;
@@ -60,13 +64,12 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			method: "GET",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MjU4NDY1LCJleHAiOjE2MjczNDQ4NjV9.xcUmG0dox-j2kNDLhWqvoxMd83z6VzOkcf4njw3Jyqk",
+				Authorization: this.props.token,
 			}),
 		})
 			.then((res) => res.json())
 			.then((assets) => {
-				console.log(assets);
+				// console.log(assets);
 				this.setState({ assets });
 			})
 			.catch((err) => {
@@ -86,8 +89,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3MzUwNjc4LCJleHAiOjE2Mjc0MzcwNzh9.Ed-iLAfKGhsbbrDuKsoEUchitpu0XyuVmIq4duiD27E",
+				Authorization: this.props.token,
 			}),
 			body: JSON.stringify({
 				serial_number: form.serial_number,
@@ -114,8 +116,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			method: "PUT",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization:
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3NDMwMzE2LCJleHAiOjE2Mjc1MTY3MTZ9.iXhVLfxworUDxNagYYwtu_pO608yLMAji46cIylY_q4",
+				Authorization: this.props.token,
 			}),
 			body: JSON.stringify({
 				serial_number: form.serial_number,
@@ -150,8 +151,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 				method: "DELETE",
 				headers: new Headers({
 					"Content-Type": "application/json",
-					Authorization:
-						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI3NDMwMzE2LCJleHAiOjE2Mjc1MTY3MTZ9.iXhVLfxworUDxNagYYwtu_pO608yLMAji46cIylY_q4",
+					Authorization: this.props.token,
 				}),
 			})
 				.then((res) => res.json())
@@ -179,6 +179,23 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		};
 	}
 
+	theme = createTheme({
+		palette: {
+			primary: {
+				light: "#757ce8",
+				main: "#3f50b5",
+				dark: "#002884",
+				contrastText: "#fff",
+			},
+			secondary: {
+				light: "#ff7961",
+				main: "#f44336",
+				dark: "#ba000d",
+				contrastText: "#000",
+			},
+		},
+	});
+
 	render() {
 		if (this.state.loading) {
 			return <div>loading . . .</div>;
@@ -196,37 +213,38 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			<Container className='centerDiv'>
 				<form onSubmit={this.onSubmit}>
 					<div style={{ display: "flex", justifySelf: "start" }}>
-						<Grid container direction='row' justifyContent='space-around' alignItems='center'>
-							<label htmlFor='serial_number'>Serial No.</label>
-							<input
-								type='text'
-								id='serial_number'
-								name='serial_number'
-								value={this.state.form.serial_number}
-								onChange={this.onChange("serial_number")}
-							/>
+						<Grid container spacing={3}>
+							<Grid item xs={4}>
+								<label htmlFor='serial_number'>Serial No.</label>
+								<input
+									type='text'
+									id='serial_number'
+									name='serial_number'
+									value={this.state.form.serial_number}
+									onChange={this.onChange("serial_number")}
+								/>
+							</Grid>
+							<Grid item xs={4}>
+								<label htmlFor='make'>Make:</label>
+								<input type='text' id='make' name='make' value={this.state.form.make} onChange={this.onChange("make")} />
+							</Grid>
+							<Grid item xs={4}>
+								<label htmlFor='model'>Model:</label>
+								<input type='text' id='model' name='model' value={this.state.form.model} onChange={this.onChange("model")} />
+							</Grid>
+							<Grid item xs={4}>
+								<label htmlFor='series'>Series:</label>
 
-							<label htmlFor='make'>Make:</label>
-
-							<input type='text' id='make' name='make' value={this.state.form.make} onChange={this.onChange("make")} />
-
-							<label htmlFor='model'>Model:</label>
-							<input type='text' id='model' name='model' value={this.state.form.model} onChange={this.onChange("model")} />
-						</Grid>
-					</div>
-					<div style={{ display: "flex", justifySelf: "start" }}>
-						<Grid container direction='row' justifyContent='space-around' alignItems='center'>
-							<label htmlFor='series'>Series:</label>
-
-							<input type='text' id='series' name='series' value={this.state.form.series} onChange={this.onChange("series")} />
-
-							<label htmlFor='dev_type'>Device Type:</label>
-
-							<input type='text' id='dev_type' name='dev_type' value={this.state.form.dev_type} onChange={this.onChange("dev_type")} />
-
-							<label htmlFor='form_factor'>Form Factor:</label>
-
-							<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} />
+								<input type='text' id='series' name='series' value={this.state.form.series} onChange={this.onChange("series")} />
+							</Grid>
+							<Grid item xs={4}>
+								<label htmlFor='dev_type'>Device Type:</label>
+								<input type='text' id='dev_type' name='dev_type' value={this.state.form.dev_type} onChange={this.onChange("dev_type")} />
+							</Grid>
+							<Grid item xs={4}>
+								<label htmlFor='form_factor'>Form Factor:</label>
+								<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} />
+							</Grid>
 						</Grid>
 					</div>
 					<input type='submit' value={this.state.action} />
@@ -267,14 +285,26 @@ class Assets extends React.Component<InitialProps, InitialState> {
 										<TableCell align='left'>{asset.dev_type}</TableCell>
 										<TableCell align='left'>{asset.serial_number}</TableCell>
 										<TableCell align='left'>
-											<button className='btn-asset' onClick={() => this.onUpdateLocal(asset)}>
-												Update
-											</button>
+											<Button
+												variant='contained'
+												color='primary'
+												size='small'
+												startIcon={<ComputerIcon />}
+												// className='btn-asset-edit'
+												onClick={() => this.onUpdateLocal(asset)}>
+												Edit
+											</Button>
 										</TableCell>
 										<TableCell align='left'>
-											<button className='btn-asset' onClick={() => this.onDelete(asset)}>
+											<Button
+												variant='contained'
+												color='secondary'
+												size='small'
+												startIcon={<DeleteIcon />}
+												// className='btn-asset-del'
+												onClick={() => this.onDelete(asset)}>
 												Delete
-											</button>
+											</Button>
 										</TableCell>
 									</TableRow>
 								);
