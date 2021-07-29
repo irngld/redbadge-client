@@ -41,7 +41,9 @@ interface Lifecycles {
 	role: Role;
 }
 
-interface InitialProps {}
+interface InitialProps {
+	token: string | null;
+}
 
 interface InitialState {
 	loading: boolean;

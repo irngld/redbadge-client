@@ -27,7 +27,21 @@ export const BackgrndContainer = styled.div`
   background-size: cover;
   width: 100vw;
   height: 100vh;
+  isolation: isolate;
+  z-index: 0;
 `;
+
+export const Wrapper = styled.div`
+  background-image: url(${background});
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+`;
+
+
 
 // font-size: calc(5rem - 2vh);
 export const TextContainer = styled.div`
