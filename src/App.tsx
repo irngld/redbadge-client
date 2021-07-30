@@ -59,20 +59,17 @@ class App extends React.Component<{}, Session> {
 				</TextContainer>
 
 				<Router>
-					<Menu session={this.state} authenticateUser={this.authenticateUser} />
+					<Menu session={this.state} authenticateUser={this.authenticateUser} handleLogout={this.handleLogout} />
 					<Switch>
 						<Route path='/login'>
-							<Login authenticateUser={this.authenticateUser} token={this.state.token} />
+							<Login authenticateUser={this.authenticateUser} token={this.state.token} onLogin={() => null} />
 						</Route>
 						<Route path='/register'>
 							<Register authenticateUser={this.authenticateUser} token={this.state.token} />
 						</Route>
 						<Route path='/assets/:id/lifecycle'>
-							<Lifecycle token={this.state.token} />
+							<Lifecycle session={this.state} />
 						</Route>
-						{/* <Route path='/assets'>
-							<Assets token={this.state.token} />
-						</Route> */}
 						<Route path='/assets' component={() => this.protectedView("assets", true)} />
 					</Switch>
 				</Router>

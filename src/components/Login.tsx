@@ -10,6 +10,7 @@ type initialState = {
 interface initialProps extends RouteComponentProps {
 	authenticateUser: (token: string, roleId: number, userId: number) => void;
 	token: string | null;
+	onLogin: () => void;
 }
 
 class Login extends Component<initialProps, initialState> {
@@ -49,6 +50,7 @@ class Login extends Component<initialProps, initialState> {
 					} = parsedRes;
 					console.log(token, roleId);
 					this.props.authenticateUser(token, roleId, id);
+					this.props.onLogin();
 					this.props.history.push("/assets"); // can also have it identify role and push to necessary endpoint
 				})
 				.catch((err) => {

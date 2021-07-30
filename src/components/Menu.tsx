@@ -8,6 +8,7 @@ import { Modal, Button } from "@material-ui/core";
 interface initialProps {
 	session: Session;
 	authenticateUser: (token: string, roleId: number, userId: number) => void;
+	handleLogout: () => void;
 }
 
 interface initialState {
@@ -48,12 +49,12 @@ class Menu extends React.Component<initialProps, initialState> {
 							onClose={this.toggleModal}
 							aria-labelledby='simple-modal-title'
 							aria-describedby='simple-modal-description'>
-							<Login token={this.props.session.token} authenticateUser={this.props.authenticateUser} />
+							<Login token={this.props.session.token} authenticateUser={this.props.authenticateUser} onLogin={this.toggleModal} />
 						</Modal>
 					</div>
 				) : (
 					<div>
-						<UserMenu />
+						<UserMenu handleLogout={this.props.handleLogout} />
 					</div>
 				)}
 			</>

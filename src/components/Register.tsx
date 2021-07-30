@@ -89,41 +89,6 @@ class RegisterComponent extends Component<intialProps, initialState> {
 		}
 	}
 
-	// async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
-	// 	event.preventDefault();
-
-	// 	if (this.state.form.email && this.state.form.password && this.state.form.verifyPwd) {
-	// 		if (this.state.form.password === this.state.form.verifyPwd) {
-	// 			const APIURL = process.env.REACT_APP_API_URL;
-	// 			const endPoint = "/user/register";
-	// 			const response = await fetch(`${APIURL}${endPoint}`, {
-	// 				method: "POST",
-	// 				headers: {
-	// 					"Content-Type": "application/json",
-	// 				},
-	// 				body: JSON.stringify({
-	// 					email: this.state.form.email,
-	// 					password: this.state.form.password,
-	// 					firstName: this.state.form.firstName,
-	// 					midInit: this.state.form.midInit,
-	// 					lastName: this.state.form.lastName,
-	// 					suffix: this.state.form.suffix,
-	// 					dept: this.state.form.dept,
-	// 				}),
-	// 			});
-
-	// 			let parsedResponse = await response.json();
-	// 			let token = parsedResponse.token;
-	// 			let roleId = parsedResponse.roleId;
-	// 			this.props.authenticateUser(token, roleId);
-	// 		} else {
-	// 			alert("Password mismatch");
-	// 		}
-	// 	} else {
-	// 		alert("Enter email AND password");
-	// 	}
-	// }
-
 	// updateEmail(event: React.ChangeEvent<HTMLInputElement>): void {
 	// 	this.setState({
 	// 		email: event.target.value,
@@ -156,8 +121,8 @@ class RegisterComponent extends Component<intialProps, initialState> {
 			return <Redirect to='/' />;
 		} else {
 			return (
-				<Container className='authContainer' style={{ width: "50vw" }}>
-					<Paper className='authForm' elevation={5}>
+				<Container className='authContainer' style={{ width: "50vw", padding: "30px" }}>
+					<Paper className='authForm' elevation={10}>
 						<form onSubmit={this.onSubmit}>
 							<Typography component='h2' variant='h4'>
 								Register

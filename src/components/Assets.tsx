@@ -78,6 +78,10 @@ class Assets extends React.Component<InitialProps, InitialState> {
 	}
 
 	componentDidMount() {
+		this.getData();
+	}
+
+	getData = () => {
 		this.setState({ loading: true });
 		const APIURL = process.env.REACT_APP_API_URL;
 
@@ -92,7 +96,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		})
 			.then((res) => res.json())
 			.then((assets) => {
-				// console.log(assets);
 				this.setState({ assets });
 			})
 			.catch((err) => {
@@ -102,7 +105,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 				// gets called, regardless of success or failure
 				this.setState({ loading: false });
 			});
-	}
+	};
 
 	createAsset(form: Omit<Asset, "id" | "createdAt" | "updatedAt">) {
 		const APIURL = process.env.REACT_APP_API_URL;
@@ -121,9 +124,10 @@ class Assets extends React.Component<InitialProps, InitialState> {
 				model: form.model,
 				dev_type: form.dev_type,
 				form_factor: form.form_factor,
-			}), //JSON.stringify(),
+			}),
 		})
 			.then((res) => res.json())
+			.then(() => this.getData())
 			.catch((err) => {
 				console.log(err);
 			})
@@ -152,6 +156,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		})
 			.then((res) => res.json())
 			.then((asset) => console.log(asset))
+			.then(() => this.getData())
 			.catch((err) => {
 				console.log(err);
 			})
@@ -179,6 +184,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			})
 				.then((res) => res.json())
 				.then((asset) => console.log(asset))
+				.then(() => this.getData())
 				.catch((err) => {
 					console.log(err);
 				})

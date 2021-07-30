@@ -28,7 +28,6 @@ export const Wrapper = styled.div`
 `;
 
 
-
 // font-size: calc(5rem - 2vh);
 export const TextContainer = styled.div`
   position: absolute;

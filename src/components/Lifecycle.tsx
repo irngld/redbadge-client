@@ -1,4 +1,5 @@
 import React from "react";
+import { Session } from "../App";
 import { Asset } from "./Assets";
 import {
 	Container,
@@ -38,37 +39,39 @@ interface User {
 	suffix: string;
 	title: string;
 	dept: string;
-	// roleID: number; // duplication on table
+	roleId: number;
 	createdAt: string;
 	updatedAt: string;
-	roleId: number; // duplication on table
 }
 
 interface Lifecycles {
 	id: number;
 	state: string;
 	location: string;
-	createdAt: string;
-	updatedAt: string;
 	assetId: number;
 	userId: number;
 	roleId: number;
 	assignedToId: number;
-	assignedTo: User;
-	asset: Asset;
-	user: User;
-	role: Role;
+	assignedTo: Omit<User, "createdAt" | "updatedAt">;
+	asset: Omit<Asset, "createdAt" | "updatedAt">;
+	user: Omit<User, "createdAt" | "updatedAt">;
+	role: Omit<Role, "createdAt" | "updatedAt">;
+	createdAt: string;
+	updatedAt: string;
 }
 
 interface InitialProps {
-	token: string;
+	session: Session;
 	classes?: any;
 }
 
+type Form = Omit<Lifecycles, "createdAt" | "updatedAt">;
 interface InitialState {
 	loading: boolean;
 	error: string;
 	lifecycles: Lifecycles[];
+	form: Form;
+	action: "Create" | "Update";
 }
 
 const styles: Styles<Theme, {}, string> = (theme: Theme) => ({
@@ -84,18 +87,71 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 			loading: false,
 			error: "",
 			lifecycles: [],
+			form: {
+				id: 0,
+				state: "",
+				location: "",
+				assetId: 0,
+				userId: 0,
+				roleId: 0,
+				assignedToId: 0,
+				assignedTo: {
+					id: 0,
+					email: "",
+					password: "",
+					firstName: "",
+					midInit: "",
+					lastName: "",
+					suffix: "",
+					title: "",
+					dept: "",
+					roleId: 0,
+				},
+				asset: {
+					asset_tag: "",
+					dev_type: "",
+					form_factor: "",
+					id: 0,
+					make: "",
+					model: "",
+					serial_number: "",
+					series: "",
+				},
+				user: {
+					id: 0,
+					email: "",
+					password: "",
+					firstName: "",
+					midInit: "",
+					lastName: "",
+					suffix: "",
+					title: "",
+					dept: "",
+					roleId: 0,
+				},
+				role: {
+					id: 0,
+					role: "",
+					description: "",
+				},
+			},
+			action: "Create",
 		};
+		this.onSubmit = this.onSubmit.bind(this);
 	}
 
 	componentDidMount() {
+		this.getData();
+	}
+
+	getData = () => {
 		const APIURL = process.env.REACT_APP_API_URL;
 		const endPoint = "/lifecycle/";
-
 		fetch(`${APIURL}${endPoint}`, {
 			method: "GET",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization: this.props.token,
+				Authorization: this.props.session.token,
 			}),
 		})
 			.then((res) => res.json())
@@ -110,6 +166,108 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 				// gets called regardless of success or failure
 				this.setState({ loading: false });
 			});
+	};
+
+	createLifecycle(form: Omit<Lifecycles, "id" | "createdAt" | "updatedAt">) {
+		const APIURL = process.env.REACT_APP_API_URL;
+		const endPoint = "/lifecycle/";
+
+		fetch(`${APIURL}${endPoint}`, {
+			method: "POST",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: this.props.session.token,
+			}),
+			body: JSON.stringify({
+				state: form.state,
+				location: form.location,
+				assetId: form.assetId,
+				userId: this.props.session.userId,
+				roleId: this.props.session.roleId,
+				assignedToId: form.assignedToId,
+			}),
+		})
+			.then((res) => res.json())
+			.then(() => this.getData())
+			.catch((err) => {
+				console.log(err);
+			})
+			.finally();
+	}
+
+	updateLifecycle(form: Form) {
+		console.log("clicked: update", form.id);
+		const APIURL = process.env.REACT_APP_API_URL;
+		const endPoint = `/lifecycle/${form.id}`;
+
+		fetch(`${APIURL}${endPoint}`, {
+			method: "PUT",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: this.props.session.token,
+			}),
+			body: JSON.stringify({
+				state: form.state,
+				location: form.location,
+				assetId: form.assetId,
+				userId: this.props.session.userId,
+				roleId: this.props.session.roleId,
+				assignedToId: form.assignedToId,
+			}),
+		})
+			.then((res) => res.json())
+			.then((asset) => console.log(asset))
+			.then(() => this.getData())
+			.catch((err) => {
+				console.log(err);
+			})
+			.finally();
+	}
+
+	onDelete(form: Form) {
+		if (window.confirm("Are you sure you want to delete?")) {
+			console.log("clicked: update", form.id);
+			const APIURL = process.env.REACT_APP_API_URL;
+			const endPoint = `/lifecycle/${form.id}`;
+
+			fetch(`${APIURL}${endPoint}`, {
+				method: "DELETE",
+				headers: new Headers({
+					"Content-Type": "application/json",
+					Authorization: this.props.session.token,
+				}),
+			})
+				.then((res) => res.json())
+				.then((asset) => console.log(asset))
+				.then(() => this.getData())
+				.catch((err) => {
+					console.log(err);
+				})
+				.finally();
+		} else {
+			window.alert("Delete cancelled.");
+		}
+	}
+
+	onUpdateLocal(lifecycle: Lifecycles) {
+		this.setState((currentState) => {
+			return { ...currentState, form: lifecycle, action: "Update" };
+		});
+	}
+
+	onSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		if (this.state.action === "Create") this.createLifecycle(this.state.form);
+		if (this.state.action === "Update") this.updateLifecycle(this.state.form);
+	}
+
+	onChange(name: string) {
+		return (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+			const { value } = event.currentTarget;
+			this.setState({
+				form: { ...this.state.form, [name]: value },
+			});
+		};
 	}
 
 	render() {
@@ -128,6 +286,77 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 
 		return (
 			<Container className='centerDiv'>
+				<form onSubmit={this.onSubmit}>
+					<div style={{ display: "flex", justifySelf: "start" }}>
+						<Grid container spacing={2} style={{ marginTop: 20 }}>
+							<Grid item xs={3}>
+								<TextField
+									id='outlined-basic'
+									label='State'
+									style={{ margin: 4 }}
+									placeholder='State'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.state}
+									onChange={this.onChange("state")}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<TextField
+									id='outlined-full-width'
+									label='Asset Location'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.location}
+									onChange={this.onChange("location")}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<TextField
+									id='outlined-full-width'
+									label='Asset ID'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.assetId}
+									onChange={this.onChange("assetId")}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<TextField
+									id='outlined-full-width'
+									label='Assigned To'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.assignedToId}
+									onChange={this.onChange("assignedToId")}
+								/>
+							</Grid>
+						</Grid>
+					</div>
+					<input type='submit' value={this.state.action} />
+				</form>
 				<TableContainer>
 					<Table className={classes.table} aria-label='simple table'>
 						<TableHead>
@@ -156,20 +385,46 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
 									Serial No.
 								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Location
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{this.state.lifecycles.map((cell, i) => {
+							{this.state.lifecycles.map((lifecycle, i) => {
 								return (
-									<TableRow key={cell.id}>
-										<TableCell align='left'>{cell.assignedTo?.lastName + ", " + cell.assignedTo?.firstName}</TableCell>
-										<TableCell align='left'>{cell.state}</TableCell>
-										<TableCell align='left'>{new Date(cell.createdAt).toLocaleString()}</TableCell>
-										<TableCell align='left'>{cell.asset.asset_tag}</TableCell>
-										<TableCell align='left'>{cell.asset.make}</TableCell>
-										<TableCell align='left'>{cell.asset.model}</TableCell>
-										<TableCell align='left'>{cell.asset.series}</TableCell>
-										<TableCell align='left'>{cell.asset.serial_number}</TableCell>
+									<TableRow key={lifecycle.id}>
+										<TableCell align='left'>{lifecycle.assignedTo?.lastName + ", " + lifecycle.assignedTo?.firstName}</TableCell>
+										<TableCell align='left'>{lifecycle.state}</TableCell>
+										<TableCell align='left'>{new Date(lifecycle.createdAt).toLocaleString()}</TableCell>
+										<TableCell align='left'>{lifecycle.asset.asset_tag}</TableCell>
+										<TableCell align='left'>{lifecycle.asset.make}</TableCell>
+										<TableCell align='left'>{lifecycle.asset.model}</TableCell>
+										<TableCell align='left'>{lifecycle.asset.series}</TableCell>
+										<TableCell align='left'>{lifecycle.asset.serial_number}</TableCell>
+										<TableCell align='left'>{lifecycle.location}</TableCell>
+										<TableCell align='left'>
+											<Button
+												variant='contained'
+												color='primary'
+												size='small'
+												startIcon={<ComputerIcon />}
+												// className='btn-asset-edit'
+												onClick={() => this.onUpdateLocal(lifecycle)}>
+												Edit
+											</Button>
+										</TableCell>
+										<TableCell align='left'>
+											<Button
+												variant='contained'
+												color='secondary'
+												size='small'
+												startIcon={<DeleteIcon />}
+												// className='btn-asset-del'
+												onClick={() => this.onDelete(lifecycle)}>
+												Delete
+											</Button>
+										</TableCell>
 									</TableRow>
 								);
 							})}
