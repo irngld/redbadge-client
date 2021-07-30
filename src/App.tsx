@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { Wrapper, TextContainer } from "./styles/Containers";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -22,7 +22,7 @@ class App extends React.Component<{}, Session> {
 		const session = storage.length > 0 ? JSON.parse(storage) : { token: "", isAdmin: false, roleId: 0, userId: 0 };
 		this.state = session;
 		this.authenticateUser = this.authenticateUser.bind(this); // required for redirect in Login:52  "this.props.history.push("/assets")"
-		// this.handleLogout = this.handleLogout.bind(this);
+		this.handleLogout = this.handleLogout.bind(this);
 	}
 
 	authenticateUser(token: string, roleId: number, userId: number): void {

@@ -1,11 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
+// import { Link } from "react-router-dom";
 import { Session } from "../App";
 import Login from "./Login";
 import UserMenu from "./UserMenu";
-
-// import { AppBar, Toolbar, Typography, Button, Box } from '@material-ui/core';
-import { Button, Modal } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Modal, Button } from "@material-ui/core";
 
 interface initialProps {
 	session: Session;
@@ -16,7 +14,7 @@ interface initialState {
 	isModalOpen: boolean;
 }
 
-class Menu extends Component<initialProps, initialState> {
+class Menu extends React.Component<initialProps, initialState> {
 	constructor(props: initialProps) {
 		super(props);
 		this.state = {
@@ -37,7 +35,10 @@ class Menu extends Component<initialProps, initialState> {
 				{!this.props.session.token ? (
 					<div>
 						<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px", marginRight: "20px" }}>
-							<Button style={{ marginBottom: "10px", padding: "10px", fontSize: 30, color: "white" }} type='submit' onClick={this.toggleModal}>
+							<Button
+								style={{ marginBottom: "10px", padding: "10px", fontSize: 30, fontWeight: "bold", color: "white" }}
+								type='submit'
+								onClick={this.toggleModal}>
 								Login
 							</Button>
 						</div>

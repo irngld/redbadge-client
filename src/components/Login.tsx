@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Redirect, Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { Paper, Container, TextField, Button, Typography } from "@material-ui/core";
+import { Paper, TextField, Button, Typography } from "@material-ui/core";
 
 type initialState = {
 	email: string;

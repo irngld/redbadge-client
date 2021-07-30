@@ -16,7 +16,6 @@ import {
 	createStyles,
 	makeStyles,
 	WithStyles,
-	IconButton,
 } from "@material-ui/core";
 import { Styles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
@@ -195,14 +194,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		if (this.state.action === "Update") this.updateAsset(this.state.form);
 	}
 
-	// onChange(name: string) {
-	// 	return (event: React.FormEvent<HTMLInputElement>) => {
-	// 		const { value } = event.currentTarget;
-	// 		this.setState({
-	// 			form: { ...this.state.form, [name]: value },
-	// 		});
-	// 	};
-	// }
 	onChange(name: string) {
 		return (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 			const { value } = event.currentTarget;
@@ -246,19 +237,11 @@ class Assets extends React.Component<InitialProps, InitialState> {
 					<div style={{ display: "flex", justifySelf: "start" }}>
 						<Grid container spacing={3} style={{ marginTop: 20 }}>
 							<Grid item xs={4}>
-								{/* <label htmlFor='serial_number'>Serial No.</label>
-								<input
-									type='text'
-									id='serial_number'
-									name='serial_number'
-									value={this.state.form.serial_number}
-									onChange={this.onChange("serial_number")}
-								/> */}
 								<TextField
-									id='outlined-full-width'
+									id='outlined-basic'
 									label='Serial Number'
 									style={{ margin: 4 }}
-									placeholder='Placeholder'
+									placeholder='Serial Number'
 									fullWidth
 									margin='normal'
 									InputLabelProps={{
@@ -270,8 +253,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								{/* <label htmlFor='make'>Make:</label>
-								<input type='text' id='make' name='make' value={this.state.form.make} onChange={this.onChange("make")} /> */}
 								<TextField
 									id='outlined-full-width'
 									label='Make'
@@ -288,8 +269,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								{/* <label htmlFor='model'>Model:</label>
-								<input type='text' id='model' name='model' value={this.state.form.model} onChange={this.onChange("model")} /> */}
 								<TextField
 									id='outlined-full-width'
 									label='Model'
@@ -306,8 +285,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								{/* <label htmlFor='series'>Series:</label>
-								<input type='text' id='series' name='series' value={this.state.form.series} onChange={this.onChange("series")} /> */}
 								<TextField
 									id='outlined-full-width'
 									label='Series'
@@ -324,8 +301,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								{/* <label htmlFor='dev_type'>Device Type:</label>
-								<input type='text' id='dev_type' name='dev_type' value={this.state.form.dev_type} onChange={this.onChange("dev_type")} /> */}
 								<TextField
 									id='outlined-full-width'
 									label='Device Type'
@@ -342,8 +317,6 @@ class Assets extends React.Component<InitialProps, InitialState> {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								{/* <label htmlFor='form_factor'>Form Factor:</label>
-								<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} /> */}
 								<TextField
 									id='outlined-full-width'
 									label='Form Factor'
