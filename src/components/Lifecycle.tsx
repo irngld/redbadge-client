@@ -1,5 +1,24 @@
 import React from "react";
 import { Asset } from "./Assets";
+import {
+	Container,
+	Grid,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+	Theme,
+	Paper,
+	withStyles,
+	TablePagination,
+} from "@material-ui/core";
+import { Styles } from "@material-ui/styles";
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ComputerIcon from "@material-ui/icons/Computer";
 
 interface Role {
 	id: number;
@@ -19,7 +38,7 @@ interface User {
 	suffix: string;
 	title: string;
 	dept: string;
-	roleID: number; // duplication on table
+	// roleID: number; // duplication on table
 	createdAt: string;
 	updatedAt: string;
 	roleId: number; // duplication on table
@@ -42,7 +61,8 @@ interface Lifecycles {
 }
 
 interface InitialProps {
-	token: string | null;
+	token: string;
+	classes?: any;
 }
 
 interface InitialState {
@@ -50,6 +70,12 @@ interface InitialState {
 	error: string;
 	lifecycles: Lifecycles[];
 }
+
+const styles: Styles<Theme, {}, string> = (theme: Theme) => ({
+	table: {
+		minWidth: 650,
+	},
+});
 
 class Lifecycle extends React.Component<InitialProps, InitialState> {
 	constructor(props: InitialProps) {
@@ -69,12 +95,12 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 			method: "GET",
 			headers: new Headers({
 				"Content-Type": "application/json",
-				Authorization: "$2a$13$PqJENFqI.a8HzD26ZW1mceJaVxQEIie5Ix3lXsWoWA493PeI2jB6u",
+				Authorization: this.props.token,
 			}),
 		})
 			.then((res) => res.json())
 			.then((lifecycles) => {
-				// console.log(lifecycles);
+				console.log(lifecycles);
 				this.setState({ lifecycles });
 			})
 			.catch((err) => {
@@ -87,6 +113,7 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 	}
 
 	render() {
+		const { classes } = this.props;
 		if (this.state.loading) {
 			return <div>loading . . .</div>;
 		}
@@ -100,38 +127,58 @@ class Lifecycle extends React.Component<InitialProps, InitialState> {
 		}
 
 		return (
-			<div>
-				<table>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>State</th>
-							<th>Asset Tag</th>
-							<th>Make</th>
-							<th>Model</th>
-							<th>series</th>
-							<th>Serial No.</th>
-						</tr>
-					</thead>
-					<tbody>
-						{this.state.lifecycles.map((cell, i) => {
-							return (
-								<tr>
-									<td>{cell.assignedTo.lastName + ", " + cell.assignedTo.firstName}</td>
-									<td>{cell.state}</td>
-									<td>{cell.asset.asset_tag}</td>
-									<td>{cell.asset.make}</td>
-									<td>{cell.asset.model}</td>
-									<td>{cell.asset.series}</td>
-									<td>{cell.asset.serial_number}</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-			</div>
+			<Container className='centerDiv'>
+				<TableContainer>
+					<Table className={classes.table} aria-label='simple table'>
+						<TableHead>
+							<TableRow>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Name
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									State
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Date
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Asset Tag
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Make
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Model
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									series
+								</TableCell>
+								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
+									Serial No.
+								</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{this.state.lifecycles.map((cell, i) => {
+								return (
+									<TableRow key={cell.id}>
+										<TableCell align='left'>{cell.assignedTo?.lastName + ", " + cell.assignedTo?.firstName}</TableCell>
+										<TableCell align='left'>{cell.state}</TableCell>
+										<TableCell align='left'>{new Date(cell.createdAt).toLocaleString()}</TableCell>
+										<TableCell align='left'>{cell.asset.asset_tag}</TableCell>
+										<TableCell align='left'>{cell.asset.make}</TableCell>
+										<TableCell align='left'>{cell.asset.model}</TableCell>
+										<TableCell align='left'>{cell.asset.series}</TableCell>
+										<TableCell align='left'>{cell.asset.serial_number}</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</Container>
 		);
 	}
 }
 
-export default Lifecycle;
+export default withStyles(styles)(Lifecycle);

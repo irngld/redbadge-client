@@ -8,7 +8,7 @@ type initialState = {
 };
 
 interface initialProps extends RouteComponentProps {
-	authenticateUser: (token: string, userType: string) => void;
+	authenticateUser: (token: string, roleId: number, userId: number) => void;
 	token: string | null;
 }
 
@@ -24,13 +24,14 @@ class Login extends Component<initialProps, initialState> {
 		this.onLoginSubmit = this.onLoginSubmit.bind(this);
 	}
 
-	async onLoginSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+	onLoginSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		if (this.state.email && this.state.password) {
 			const APIURL = process.env.REACT_APP_API_URL;
 			const endPoint = "/user/login";
-			let response = await fetch(`${APIURL}${endPoint}`, {
+
+			fetch(`${APIURL}${endPoint}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -39,15 +40,21 @@ class Login extends Component<initialProps, initialState> {
 					email: this.state.email,
 					password: this.state.password,
 				}),
-			});
-
-			let parsedResponse = await response.json();
-			let token = parsedResponse.token;
-			let userType = parsedResponse.userType;
-			this.props.authenticateUser(token, userType);
-			this.props.history.push("/asset"); // can also have it identify role and push to necessary endpoint
-		} else {
-			alert("Enter email AND password");
+			})
+				.then((res) => res.json())
+				.then((parsedRes) => {
+					const {
+						token,
+						user: { roleId, id },
+					} = parsedRes;
+					console.log(token, roleId);
+					this.props.authenticateUser(token, roleId, id);
+					this.props.history.push("/assets"); // can also have it identify role and push to necessary endpoint
+				})
+				.catch((err) => {
+					console.log(err);
+				})
+				.finally();
 		}
 	}
 

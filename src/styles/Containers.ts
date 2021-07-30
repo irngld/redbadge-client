@@ -17,20 +17,6 @@ right: 0;
 `;
 
 
-export const BackgrndContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-image: url(${background});
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  width: 100vw;
-  height: 100vh;
-  isolation: isolate;
-  z-index: 0;
-`;
-
 export const Wrapper = styled.div`
   background-image: url(${background});
   background-repeat: no-repeat;
@@ -53,7 +39,7 @@ export const TextContainer = styled.div`
   height: 50vh;
   width: 25vw;
   h1 {
-    color: black;
+    color: white;
     font-size: 65px;
     font-weight: bolder;
     text-align: left;
@@ -74,3 +60,4 @@ export const TextContainer = styled.div`
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
   }
 `;
+

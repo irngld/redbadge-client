@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { Link, Redirect } from "react-router-dom";
-import Login from "./Login";
+import { Redirect, Link, RouteComponentProps, withRouter } from "react-router-dom";
+// import Login from "./Login";
 import { TextField, Paper, Container, Button, Typography } from "@material-ui/core";
 
 export interface Form {
 	email: string;
 	password: string;
-	pwdCheck: string;
+	verifyPwd: string;
 	firstName: string;
 	midInit: string;
 	lastName: string;
@@ -17,17 +17,13 @@ interface initialState {
 	form: Form;
 }
 
-interface intialProps {
-	authenticateUser: (token: string, userType: string) => void;
-	token: string | null;
+interface intialProps extends RouteComponentProps {
+	authenticateUser: (token: string, roleId: number, userId: number) => void;
+	token: string;
 }
-// type initialProps = {
-// 	authenticateUser: (token: string, userType: string) => void;
-// 	token: string | null;
-// };
 
-let emailRegex = /[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,}/;
-let passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()\-+=^_]).{8,20}$/;
+const emailRegex = /[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,}/;
+const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()\-+=^_]).{8,20}$/;
 
 class RegisterComponent extends Component<intialProps, initialState> {
 	constructor(props: intialProps) {
@@ -36,7 +32,7 @@ class RegisterComponent extends Component<intialProps, initialState> {
 			form: {
 				email: "",
 				password: "",
-				pwdCheck: "",
+				verifyPwd: "",
 				firstName: "",
 				midInit: "",
 				lastName: "",
@@ -51,14 +47,15 @@ class RegisterComponent extends Component<intialProps, initialState> {
 		// this.updatePasswordConfirm = this.updatePasswordConfirm.bind(this);
 	}
 
-	async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+	onSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		if (this.state.form.email && this.state.form.password && this.state.form.pwdCheck) {
-			if (this.state.form.password === this.state.form.pwdCheck) {
+		if (this.state.form.email && this.state.form.password && this.state.form.verifyPwd) {
+			if (this.state.form.password === this.state.form.verifyPwd) {
 				const APIURL = process.env.REACT_APP_API_URL;
 				const endPoint = "/user/register";
-				const response = await fetch(`${APIURL}${endPoint}`, {
+
+				fetch(`${APIURL}${endPoint}`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -72,19 +69,60 @@ class RegisterComponent extends Component<intialProps, initialState> {
 						suffix: this.state.form.suffix,
 						dept: this.state.form.dept,
 					}),
-				});
-
-				let parsedResponse = await response.json();
-				let token = parsedResponse.token;
-				let userType = parsedResponse.userType;
-				this.props.authenticateUser(token, userType);
-			} else {
-				alert("Password mismatch");
+				})
+					.then((res) => res.json())
+					.then()
+					.then((parsedRes) => {
+						const {
+							token,
+							user: { roleId, id },
+						} = parsedRes;
+						console.log(token, roleId);
+						this.props.authenticateUser(token, roleId, id);
+						this.props.history.push("/assets"); // can also have it identify role and push to necessary endpoint
+					})
+					.catch((err) => {
+						console.log(err);
+					})
+					.finally();
 			}
-		} else {
-			alert("Enter email AND password");
 		}
 	}
+
+	// async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+	// 	event.preventDefault();
+
+	// 	if (this.state.form.email && this.state.form.password && this.state.form.verifyPwd) {
+	// 		if (this.state.form.password === this.state.form.verifyPwd) {
+	// 			const APIURL = process.env.REACT_APP_API_URL;
+	// 			const endPoint = "/user/register";
+	// 			const response = await fetch(`${APIURL}${endPoint}`, {
+	// 				method: "POST",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					email: this.state.form.email,
+	// 					password: this.state.form.password,
+	// 					firstName: this.state.form.firstName,
+	// 					midInit: this.state.form.midInit,
+	// 					lastName: this.state.form.lastName,
+	// 					suffix: this.state.form.suffix,
+	// 					dept: this.state.form.dept,
+	// 				}),
+	// 			});
+
+	// 			let parsedResponse = await response.json();
+	// 			let token = parsedResponse.token;
+	// 			let roleId = parsedResponse.roleId;
+	// 			this.props.authenticateUser(token, roleId);
+	// 		} else {
+	// 			alert("Password mismatch");
+	// 		}
+	// 	} else {
+	// 		alert("Enter email AND password");
+	// 	}
+	// }
 
 	// updateEmail(event: React.ChangeEvent<HTMLInputElement>): void {
 	// 	this.setState({
@@ -100,7 +138,7 @@ class RegisterComponent extends Component<intialProps, initialState> {
 
 	// updatePasswordConfirm(event: React.ChangeEvent<HTMLInputElement>): void {
 	// 	this.setState({
-	// 		pwdCheck: event.target.value,
+	// 		verifyPwd: event.target.value,
 	// 	});
 	// }
 
@@ -218,10 +256,10 @@ class RegisterComponent extends Component<intialProps, initialState> {
 								label='Confirm password'
 								variant='standard'
 								type='password'
-								value={this.state.form.pwdCheck}
-								onChange={this.onChange("pwdCheck")} // this.updatePasswordConfirm
+								value={this.state.form.verifyPwd}
+								onChange={this.onChange("verifyPwd")} // this.updatePasswordConfirm
 								margin='normal'
-								error={this.state.form.password !== this.state.form.pwdCheck && this.state.form.pwdCheck !== ""}
+								error={this.state.form.password !== this.state.form.verifyPwd && this.state.form.verifyPwd !== ""}
 								helperText='Passwords must match'
 								fullWidth={true}
 							/>
@@ -229,7 +267,7 @@ class RegisterComponent extends Component<intialProps, initialState> {
 							<Button
 								className='authButton'
 								type='submit'
-								disabled={!emailRegex.test(this.state.form.email) || this.state.form.password !== this.state.form.pwdCheck}>
+								disabled={!emailRegex.test(this.state.form.email) || this.state.form.password !== this.state.form.verifyPwd}>
 								Register
 							</Button>
 						</form>
@@ -247,4 +285,4 @@ class RegisterComponent extends Component<intialProps, initialState> {
 	}
 }
 
-export default RegisterComponent;
+export default withRouter(RegisterComponent);

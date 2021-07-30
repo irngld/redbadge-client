@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import { Session } from "../App";
+import Login from "./Login";
+import UserMenu from "./UserMenu";
 
 // import { AppBar, Toolbar, Typography, Button, Box } from '@material-ui/core';
 import { Button, Modal } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Login from "./Login";
 
 interface initialProps {
 	session: Session;
-	authenticateUser: (token: string, userType: string) => void;
+	authenticateUser: (token: string, roleId: number, userId: number) => void;
 }
 
 interface initialState {
@@ -30,27 +31,11 @@ class Menu extends Component<initialProps, initialState> {
 		});
 	};
 
-	// rand() {
-	// 	return Math.round(Math.random() * 20) - 10;
-	// }
-
-	// getModalStyle() {
-	// 	const top = 50 + this.rand();
-	// 	const left = 50 + this.rand();
-
-	// 	return {
-	// 		top: `${top}%`,
-	// 		left: `${left}%`,
-	// 		transform: `translate(-${top}%, -${left}%)`,
-	// 	};
-	// }
-	// modalStyle = this.getModalStyle();
-
 	render() {
 		return (
 			<>
 				{!this.props.session.token ? (
-					<>
+					<div>
 						<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px", marginRight: "20px" }}>
 							<Button style={{ marginBottom: "10px", padding: "10px", fontSize: 30, color: "white" }} type='submit' onClick={this.toggleModal}>
 								Login
@@ -64,8 +49,12 @@ class Menu extends Component<initialProps, initialState> {
 							aria-describedby='simple-modal-description'>
 							<Login token={this.props.session.token} authenticateUser={this.props.authenticateUser} />
 						</Modal>
-					</>
-				) : null}
+					</div>
+				) : (
+					<div>
+						<UserMenu />
+					</div>
+				)}
 			</>
 		);
 	}

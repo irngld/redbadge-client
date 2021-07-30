@@ -1,10 +1,27 @@
 import React from "react";
-import { Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from "@material-ui/core";
-import { createTheme } from "@material-ui/core/styles";
+import {
+	Container,
+	Grid,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+	Theme,
+	Paper,
+	withStyles,
+	TablePagination,
+	createStyles,
+	makeStyles,
+	WithStyles,
+	IconButton,
+} from "@material-ui/core";
+import { Styles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ComputerIcon from "@material-ui/icons/Computer";
-// import { Session } from "../App"; // added 7/26, testing
 
 export interface Asset {
 	asset_tag: string;
@@ -21,6 +38,7 @@ export interface Asset {
 
 interface InitialProps {
 	token: string;
+	classes?: any;
 }
 
 type Form = Omit<Asset, "createdAt" | "updatedAt">;
@@ -31,6 +49,12 @@ interface InitialState {
 	form: Form;
 	action: "Create" | "Update";
 }
+
+const styles: Styles<Theme, {}, string> = (theme: Theme) => ({
+	table: {
+		minWidth: 650,
+	},
+});
 
 class Assets extends React.Component<InitialProps, InitialState> {
 	constructor(props: InitialProps) {
@@ -161,6 +185,7 @@ class Assets extends React.Component<InitialProps, InitialState> {
 				})
 				.finally();
 		} else {
+			window.alert("Delete cancelled.");
 		}
 	}
 
@@ -170,8 +195,16 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		if (this.state.action === "Update") this.updateAsset(this.state.form);
 	}
 
+	// onChange(name: string) {
+	// 	return (event: React.FormEvent<HTMLInputElement>) => {
+	// 		const { value } = event.currentTarget;
+	// 		this.setState({
+	// 			form: { ...this.state.form, [name]: value },
+	// 		});
+	// 	};
+	// }
 	onChange(name: string) {
-		return (event: React.FormEvent<HTMLInputElement>) => {
+		return (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 			const { value } = event.currentTarget;
 			this.setState({
 				form: { ...this.state.form, [name]: value },
@@ -179,24 +212,22 @@ class Assets extends React.Component<InitialProps, InitialState> {
 		};
 	}
 
-	theme = createTheme({
-		palette: {
-			primary: {
-				light: "#757ce8",
-				main: "#3f50b5",
-				dark: "#002884",
-				contrastText: "#fff",
-			},
-			secondary: {
-				light: "#ff7961",
-				main: "#f44336",
-				dark: "#ba000d",
-				contrastText: "#000",
-			},
-		},
-	});
+	// PAGINATION CODE
+	// emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+	// // const [page, setPage] = React.useState(0);
+	// // const [rowsPerPage, setRowsPerPage] = React.useState(10);
+	// handleChangePage = (event, newPage) => {
+	// 	setPage(newPage);
+	// };
+
+	// handleChangeRowsPerPage = (event) => {
+	// 	setRowsPerPage(parseInt(event.target.value, 10));
+	// 	setPage(0);
+	// };
 
 	render() {
+		const { classes } = this.props;
+
 		if (this.state.loading) {
 			return <div>loading . . .</div>;
 		}
@@ -213,44 +244,127 @@ class Assets extends React.Component<InitialProps, InitialState> {
 			<Container className='centerDiv'>
 				<form onSubmit={this.onSubmit}>
 					<div style={{ display: "flex", justifySelf: "start" }}>
-						<Grid container spacing={3}>
+						<Grid container spacing={3} style={{ marginTop: 20 }}>
 							<Grid item xs={4}>
-								<label htmlFor='serial_number'>Serial No.</label>
+								{/* <label htmlFor='serial_number'>Serial No.</label>
 								<input
 									type='text'
 									id='serial_number'
 									name='serial_number'
 									value={this.state.form.serial_number}
 									onChange={this.onChange("serial_number")}
+								/> */}
+								<TextField
+									id='outlined-full-width'
+									label='Serial Number'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.serial_number}
+									onChange={this.onChange("serial_number")}
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								<label htmlFor='make'>Make:</label>
-								<input type='text' id='make' name='make' value={this.state.form.make} onChange={this.onChange("make")} />
+								{/* <label htmlFor='make'>Make:</label>
+								<input type='text' id='make' name='make' value={this.state.form.make} onChange={this.onChange("make")} /> */}
+								<TextField
+									id='outlined-full-width'
+									label='Make'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.make}
+									onChange={this.onChange("make")}
+								/>
 							</Grid>
 							<Grid item xs={4}>
-								<label htmlFor='model'>Model:</label>
-								<input type='text' id='model' name='model' value={this.state.form.model} onChange={this.onChange("model")} />
+								{/* <label htmlFor='model'>Model:</label>
+								<input type='text' id='model' name='model' value={this.state.form.model} onChange={this.onChange("model")} /> */}
+								<TextField
+									id='outlined-full-width'
+									label='Model'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.model}
+									onChange={this.onChange("model")}
+								/>
 							</Grid>
 							<Grid item xs={4}>
-								<label htmlFor='series'>Series:</label>
-
-								<input type='text' id='series' name='series' value={this.state.form.series} onChange={this.onChange("series")} />
+								{/* <label htmlFor='series'>Series:</label>
+								<input type='text' id='series' name='series' value={this.state.form.series} onChange={this.onChange("series")} /> */}
+								<TextField
+									id='outlined-full-width'
+									label='Series'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.series}
+									onChange={this.onChange("series")}
+								/>
 							</Grid>
 							<Grid item xs={4}>
-								<label htmlFor='dev_type'>Device Type:</label>
-								<input type='text' id='dev_type' name='dev_type' value={this.state.form.dev_type} onChange={this.onChange("dev_type")} />
+								{/* <label htmlFor='dev_type'>Device Type:</label>
+								<input type='text' id='dev_type' name='dev_type' value={this.state.form.dev_type} onChange={this.onChange("dev_type")} /> */}
+								<TextField
+									id='outlined-full-width'
+									label='Device Type'
+									style={{ margin: 4 }}
+									placeholder='Desktop . . .'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.dev_type}
+									onChange={this.onChange("dev_type")}
+								/>
 							</Grid>
 							<Grid item xs={4}>
-								<label htmlFor='form_factor'>Form Factor:</label>
-								<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} />
+								{/* <label htmlFor='form_factor'>Form Factor:</label>
+								<input type='text' id='form_factor' name='form_factor' value={this.state.form.form_factor} onChange={this.onChange("form_factor")} /> */}
+								<TextField
+									id='outlined-full-width'
+									label='Form Factor'
+									style={{ margin: 4 }}
+									placeholder='Placeholder'
+									fullWidth
+									margin='normal'
+									InputLabelProps={{
+										shrink: true,
+									}}
+									variant='outlined'
+									value={this.state.form.form_factor}
+									onChange={this.onChange("form_factor")}
+								/>
 							</Grid>
 						</Grid>
 					</div>
 					<input type='submit' value={this.state.action} />
 				</form>
-				<TableContainer style={{ marginTop: "50px" }}>
-					<Table aria-label='simple table'>
+				<TableContainer component={Paper} style={{ marginTop: "50px" }}>
+					<Table className={classes.table} aria-label='simple table'>
 						<TableHead>
 							<TableRow>
 								<TableCell align='left' style={{ fontWeight: "bold", fontSize: 15 }}>
@@ -311,10 +425,19 @@ class Assets extends React.Component<InitialProps, InitialState> {
 							})}
 						</TableBody>
 					</Table>
+					{/* <TablePagination
+						rowsPerPageOptions={[5, 10, 25]}
+						component='div'
+						count={rows.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						onChangePage={handleChangePage}
+						onChangeRowsPerPage={handleChangeRowsPerPage}
+					/> */}
 				</TableContainer>
 			</Container>
 		);
 	}
 }
 
-export default Assets;
+export default withStyles(styles)(Assets);
